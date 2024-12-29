@@ -1,6 +1,6 @@
 name: FakePlayers
-version: '1.0-SNAPSHOT'
+version: '${version}'
 main: me.infinityy.fakeplayers.FakePlayers
-api-version: '1.21'
+api-version: '${apiversion}'
 authors: [ infinityy ]
 description: Carpet-like fake players for PaperMC
