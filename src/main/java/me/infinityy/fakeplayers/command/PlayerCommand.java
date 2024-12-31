@@ -141,6 +141,8 @@ public class PlayerCommand {
         if (entity != null) {
             player.attack(entity.getEntity());
             player.swing(InteractionHand.MAIN_HAND);
+            player.resetAttackStrengthTicker();
+            player.resetLastActionTime();
         }
 
         return 0;

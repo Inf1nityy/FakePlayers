@@ -85,7 +85,12 @@ public class FakeServerPlayer extends ServerPlayer {
             }
             FakeServerPlayer instance = new FakeServerPlayer(server, worldIn, current, ClientInformation.createDefault(), false);
             instance.fixStartingPosition = () -> instance.moveTo(pos.x, pos.y, pos.z, (float) yaw, (float) pitch);
-            server.getPlayerList().placeNewPlayer(new FakeClientConnection(PacketFlow.SERVERBOUND), instance, new CommonListenerCookie(current, 0, instance.clientInformation(), false));
+
+            FakeClientConnection connection = new FakeClientConnection(PacketFlow.SERVERBOUND);
+            CommonListenerCookie cookie = new CommonListenerCookie(current, 0, instance.clientInformation(), false);
+            server.getPlayerList().placeNewPlayer(connection, instance, cookie);
+            instance.connection = new FakeServerGamePacketListenerImpl(MinecraftServer.getServer(), connection, instance, cookie);
+
             instance.teleportTo(worldIn, pos.x, pos.y, pos.z, Set.of(), (float) yaw, (float) pitch, true);
             instance.setHealth(20.0F);
             instance.unsetRemoved();
@@ -111,7 +116,12 @@ public class FakeServerPlayer extends ServerPlayer {
         GameProfile gameprofile = player.getGameProfile();
         FakeServerPlayer playerShadow = new FakeServerPlayer(server, worldIn, gameprofile, player.clientInformation(), true);
         playerShadow.setChatSession(player.getChatSession());
-        server.getPlayerList().placeNewPlayer(new FakeClientConnection(PacketFlow.SERVERBOUND), playerShadow, new CommonListenerCookie(gameprofile, 0, player.clientInformation(), true));
+
+        FakeClientConnection connection = new FakeClientConnection(PacketFlow.SERVERBOUND);
+        CommonListenerCookie cookie = new CommonListenerCookie(player.gameProfile, 0, playerShadow.clientInformation(), false);
+        server.getPlayerList().placeNewPlayer(connection, playerShadow, cookie);
+        playerShadow.connection = new FakeServerGamePacketListenerImpl(MinecraftServer.getServer(), connection, playerShadow, cookie);
+
 
         playerShadow.setHealth(player.getHealth());
         playerShadow.connection.teleport(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
