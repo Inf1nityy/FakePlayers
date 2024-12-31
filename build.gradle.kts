@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("io.papermc.paperweight.userdev") version "1.7.7"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.10"
 }
 
 repositories {
@@ -14,14 +14,11 @@ repositories {
         name = "sonatype"
         url = uri("https://oss.sonatype.org/content/groups/public/")
     }
-    maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
-    maven { url = uri("https://jitpack.io") }
-    maven { url = uri("https://maven.enginehub.org/repo/") }
 }
 
 dependencies {
-    paperweight.paperDevBundle(rootProject.providers.gradleProperty("paper_version"))
     compileOnly("io.papermc.paper:paper-api:${property("paper_version")}")
+    paperweight.paperDevBundle(rootProject.providers.gradleProperty("paper_version"))
 }
 
 val javaVersion = 21

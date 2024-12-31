@@ -14,7 +14,8 @@ import net.minecraft.network.protocol.game.ClientboundSetHeldSlotPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -131,8 +132,16 @@ public class PlayerCommand {
 
     private int attack(CommandContext<CommandSourceStack> context) {
         ServerPlayer player = getPlayer(context);
-        EntityHitResult entity = player.getTargetEntity(120);
-        if (entity != null) player.attack(entity.getEntity());
+
+        int reach = 0;
+        AttributeInstance reachAttribute = player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE);
+        if (reachAttribute != null) reach = (int) reachAttribute.getValue();
+
+        EntityHitResult entity = player.getTargetEntity(reach);
+        if (entity != null) {
+            player.attack(entity.getEntity());
+            player.swing(InteractionHand.MAIN_HAND);
+        }
 
         return 0;
     }

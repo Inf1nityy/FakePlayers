@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -103,8 +104,7 @@ public class FakeServerPlayer extends ServerPlayer {
         return SkullBlockEntity.fetchGameProfile(name);
     }
 
-    public static ServerPlayer createShadow(MinecraftServer server, ServerPlayer player)
-    {
+    public static ServerPlayer createShadow(MinecraftServer server, ServerPlayer player) {
         player.getServer().getPlayerList().remove(player);
         player.connection.disconnect(Component.translatable("multiplayer.disconnect.duplicate_login"));
         ServerLevel worldIn = player.serverLevel();//.getWorld(player.dimension);
@@ -121,7 +121,6 @@ public class FakeServerPlayer extends ServerPlayer {
         playerShadow.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(0.6F);
         playerShadow.entityData.set(DATA_PLAYER_MODE_CUSTOMISATION, player.getEntityData().get(DATA_PLAYER_MODE_CUSTOMISATION));
 
-
         server.getPlayerList().broadcastAll(new ClientboundRotateHeadPacket(playerShadow, (byte) (player.yHeadRot * 256 / 360)), playerShadow.level().dimension());
         server.getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, playerShadow));
         //player.world.getChunkManager().updatePosition(playerShadow);
@@ -129,25 +128,21 @@ public class FakeServerPlayer extends ServerPlayer {
         return playerShadow;
     }
 
-    public static FakeServerPlayer respawnFake(MinecraftServer server, ServerLevel level, GameProfile profile, ClientInformation cli)
-    {
+    public static FakeServerPlayer respawnFake(MinecraftServer server, ServerLevel level, GameProfile profile, ClientInformation cli) {
         return new FakeServerPlayer(server, level, profile, cli, false);
     }
 
-    public static boolean isSpawningPlayer(String username)
-    {
+    public static boolean isSpawningPlayer(String username) {
         return spawning.contains(username);
     }
 
-    private FakeServerPlayer(MinecraftServer server, ServerLevel worldIn, GameProfile profile, ClientInformation cli, boolean shadow)
-    {
+    private FakeServerPlayer(MinecraftServer server, ServerLevel worldIn, GameProfile profile, ClientInformation cli, boolean shadow) {
         super(server, worldIn, profile, cli);
         isAShadow = shadow;
     }
 
     @Override
-    public void onEquipItem(final @NotNull EquipmentSlot slot, final @NotNull ItemStack previous, final @NotNull ItemStack stack)
-    {
+    public void onEquipItem(final @NotNull EquipmentSlot slot, final @NotNull ItemStack previous, final @NotNull ItemStack stack) {
         if (!isUsingItem()) super.onEquipItem(slot, previous, stack);
     }
 
@@ -157,8 +152,7 @@ public class FakeServerPlayer extends ServerPlayer {
         kill(Component.literal("killed"));
     }
 
-    public void kill(Component reason)
-    {
+    public void kill(Component reason) {
         shakeOff();
 
         if (reason.getContents() instanceof TranslatableContents text && text.getKey().equals("multiplayer.disconnect.duplicate_login")) {
@@ -169,41 +163,31 @@ public class FakeServerPlayer extends ServerPlayer {
     }
 
     @Override
-    public void tick()
-    {
+    public void tick() {
         float vel = this.isCrouching() ? 0.3F : 1.0F;
         this.zza = this.forward * vel;
         this.xxa = this.strafing * vel;
         if (this.sneaking) this.setPose(Pose.CROUCHING);
 
-        if (this.getServer().getTickCount() % 10 == 0)
-        {
-            this.connection.resetPosition();
-            this.serverLevel().getChunkSource().move(this);
-        }
-        try
-        {
+        try {
+            super.tick();
             this.doTick();
         }
-        catch (NullPointerException ignored)
-        {
+        catch (NullPointerException ignored) {
             // happens with that paper port thingy - not sure what that would fix, but hey
             // the game not gonna crash violently.
         }
     }
 
-    private void shakeOff()
-    {
+    private void shakeOff() {
         if (getVehicle() instanceof Player) stopRiding();
-        for (Entity passenger : getIndirectPassengers())
-        {
+        for (Entity passenger : getIndirectPassengers()) {
             if (passenger instanceof Player) passenger.stopRiding();
         }
     }
 
     @Override
-    public void die(DamageSource cause)
-    {
+    public void die(@NotNull DamageSource cause) {
         shakeOff();
         super.die(cause);
         setHealth(20);
@@ -212,8 +196,7 @@ public class FakeServerPlayer extends ServerPlayer {
     }
 
     @Override
-    public @NotNull String getIpAddress()
-    {
+    public @NotNull String getIpAddress() {
         return "127.0.0.1";
     }
 
@@ -223,13 +206,12 @@ public class FakeServerPlayer extends ServerPlayer {
     }
 
     @Override
-    protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {
+    protected void checkFallDamage(double y, boolean onGround, @NotNull BlockState state, @NotNull BlockPos pos) {
         doCheckFallDamage(0.0, y, 0.0, onGround);
     }
 
     @Override
-    public ServerPlayer teleport(TeleportTransition serverLevel)
-    {
+    public ServerPlayer teleport(@NotNull TeleportTransition serverLevel) {
         super.teleport(serverLevel);
         if (wonGame) {
             ServerboundClientCommandPacket p = new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.PERFORM_RESPAWN);
