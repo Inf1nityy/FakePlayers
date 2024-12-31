@@ -21,6 +21,7 @@ import net.minecraft.server.players.GameProfileCache;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
@@ -40,6 +41,9 @@ import java.util.concurrent.CompletableFuture;
 
 public class FakeServerPlayer extends ServerPlayer {
     private static final Set<String> spawning = new HashSet<>();
+    public int forward = 0;
+    public int strafing = 0;
+    public boolean sneaking = false;
 
     public Runnable fixStartingPosition = () -> {};
     public boolean isAShadow;
@@ -167,6 +171,11 @@ public class FakeServerPlayer extends ServerPlayer {
     @Override
     public void tick()
     {
+        float vel = this.isCrouching() ? 0.3F : 1.0F;
+        this.zza = this.forward * vel;
+        this.xxa = this.strafing * vel;
+        if (this.sneaking) this.setPose(Pose.CROUCHING);
+
         if (this.getServer().getTickCount() % 10 == 0)
         {
             this.connection.resetPosition();
@@ -174,7 +183,6 @@ public class FakeServerPlayer extends ServerPlayer {
         }
         try
         {
-            super.tick();
             this.doTick();
         }
         catch (NullPointerException ignored)
