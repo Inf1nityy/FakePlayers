@@ -35,6 +35,7 @@ public class PlayerCommand {
                         .then(argument("player", StringArgumentType.word())
                                 .suggests((c, b) -> SharedSuggestionProvider.suggest(getPlayerSuggestions(c.getSource()), b))
                                 .then(literal("spawn").executes(this::spawn))
+                                .then(literal("command").then(argument("command", StringArgumentType.greedyString()).executes(this::executeCommand)))
                                 .then(literal("shadow").executes(this::shadow))
                                 .then(literal("dismount").executes(this::dismount))
                                 .then(literal("drop").executes(context -> drop(context, false)))
@@ -178,6 +179,11 @@ public class PlayerCommand {
 
     private int shadow(CommandContext<CommandSourceStack> context) {
         FakeServerPlayer.createShadow(MinecraftServer.getServer(), getPlayer(context));
+        return 0;
+    }
+
+    private int executeCommand(CommandContext<CommandSourceStack> context) {
+        MinecraftServer.getServer().getCommands().performPrefixedCommand(getPlayer(context).createCommandSourceStack().withPermission(4), StringArgumentType.getString(context, "command"));
         return 0;
     }
 
