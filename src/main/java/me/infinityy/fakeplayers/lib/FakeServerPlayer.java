@@ -2,6 +2,7 @@ package me.infinityy.fakeplayers.lib;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -60,7 +61,7 @@ public class FakeServerPlayer extends ServerPlayer {
             GameProfileCache.setUsesAuthentication(server.isDedicatedServer() && server.usesAuthentication());
         }
         if (gameprofile == null) {
-            return false;
+            gameprofile = new GameProfile(UUIDUtil.createOfflinePlayerUUID(username), username);
         }
         GameProfile finalGP = gameprofile;
 
@@ -75,6 +76,7 @@ public class FakeServerPlayer extends ServerPlayer {
             spawning.remove(name);
             if (t != null)
             {
+                System.out.println(t.getMessage());
                 return;
             }
 

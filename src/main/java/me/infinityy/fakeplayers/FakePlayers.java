@@ -29,4 +29,8 @@ public final class FakePlayers extends JavaPlugin {
     public void onDisable() {
         HandlerList.unregisterAll(this);
     }
+
+    public static FakePlayers getInstance() {
+        return getPlugin(FakePlayers.class);
+    }
 }
