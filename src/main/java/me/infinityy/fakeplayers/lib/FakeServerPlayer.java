@@ -47,7 +47,6 @@ public class FakeServerPlayer extends ServerPlayer {
     public int strafing = 0;
     public boolean sneaking = false;
 
-    public Runnable fixStartingPosition = () -> {};
     public boolean isAShadow;
 
     public static boolean createFake(String username, MinecraftServer server, Vec3 pos, double yaw, double pitch, ResourceKey<Level> dimensionId, GameType gamemode, boolean flying) {
@@ -86,7 +85,6 @@ public class FakeServerPlayer extends ServerPlayer {
                 current = p.get();
             }
             FakeServerPlayer instance = new FakeServerPlayer(server, worldIn, current, ClientInformation.createDefault(), false);
-            instance.fixStartingPosition = () -> instance.teleportTo(pos.x, pos.y, pos.z);
 
             FakeClientConnection connection = new FakeClientConnection(PacketFlow.SERVERBOUND);
             CommonListenerCookie cookie = CommonListenerCookie.createInitial(current, false);

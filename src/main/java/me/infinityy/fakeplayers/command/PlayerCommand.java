@@ -50,7 +50,7 @@ public class PlayerCommand {
                                 .then(literal("mount").executes(this::mount))
                                 .then(literal("use").executes(this::use))
                                 .then(literal("stop").executes(this::stop))
-                                .then(literal("hotbar").then(argument("slot", IntegerArgumentType.integer(1, 9))).executes(this::hotbar))
+                                .then(literal("hotbar").then(argument("slot", IntegerArgumentType.integer(1, 9)).executes(this::hotbar)))
                                 .then(literal("look").then(argument("position", Vec3Argument.vec3()).executes(this::look)))
                                 .then(literal("move").then(argument("direction", StringArgumentType.word())
                                         .suggests((c, b) -> SharedSuggestionProvider.suggest(List.of("forward", "backward", "left", "right"), b))
