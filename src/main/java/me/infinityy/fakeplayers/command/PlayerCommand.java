@@ -118,7 +118,7 @@ public class PlayerCommand {
     private int hotbar(CommandContext<CommandSourceStack> context) {
         Integer slot = context.getArgument("slot", Integer.class);
         ServerPlayer player = getPlayer(context);
-        player.getInventory().setSelectedHotbarSlot(slot - 1);
+        player.getInventory().setSelectedSlot(slot - 1);
         player.connection.send(new ClientboundSetHeldSlotPacket(slot - 1));
         return 0;
     }

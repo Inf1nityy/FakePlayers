@@ -86,10 +86,10 @@ public class FakeServerPlayer extends ServerPlayer {
                 current = p.get();
             }
             FakeServerPlayer instance = new FakeServerPlayer(server, worldIn, current, ClientInformation.createDefault(), false);
-            instance.fixStartingPosition = () -> instance.moveTo(pos.x, pos.y, pos.z, (float) yaw, (float) pitch);
+            instance.fixStartingPosition = () -> instance.teleportTo(pos.x, pos.y, pos.z);
 
             FakeClientConnection connection = new FakeClientConnection(PacketFlow.SERVERBOUND);
-            CommonListenerCookie cookie = new CommonListenerCookie(current, 0, instance.clientInformation(), false);
+            CommonListenerCookie cookie = CommonListenerCookie.createInitial(current, false);
             server.getPlayerList().placeNewPlayer(connection, instance, cookie);
             instance.connection = new FakeServerGamePacketListenerImpl(MinecraftServer.getServer(), connection, instance, cookie);
 
@@ -114,13 +114,13 @@ public class FakeServerPlayer extends ServerPlayer {
     public static ServerPlayer createShadow(MinecraftServer server, ServerPlayer player) {
         player.getServer().getPlayerList().remove(player);
         player.connection.disconnect(Component.translatable("multiplayer.disconnect.duplicate_login"));
-        ServerLevel worldIn = player.serverLevel();//.getWorld(player.dimension);
+        ServerLevel worldIn = player.level();//.getWorld(player.dimension);
         GameProfile gameprofile = player.getGameProfile();
         FakeServerPlayer playerShadow = new FakeServerPlayer(server, worldIn, gameprofile, player.clientInformation(), true);
         playerShadow.setChatSession(player.getChatSession());
 
         FakeClientConnection connection = new FakeClientConnection(PacketFlow.SERVERBOUND);
-        CommonListenerCookie cookie = new CommonListenerCookie(player.gameProfile, 0, playerShadow.clientInformation(), false);
+        CommonListenerCookie cookie = CommonListenerCookie.createInitial(player.gameProfile, false);
         server.getPlayerList().placeNewPlayer(connection, playerShadow, cookie);
         playerShadow.connection = new FakeServerGamePacketListenerImpl(MinecraftServer.getServer(), connection, playerShadow, cookie);
 
@@ -170,7 +170,7 @@ public class FakeServerPlayer extends ServerPlayer {
         if (reason.getContents() instanceof TranslatableContents text && text.getKey().equals("multiplayer.disconnect.duplicate_login")) {
             this.connection.onDisconnect(new DisconnectionDetails(reason));
         } else {
-            this.server.schedule(new TickTask(this.server.getTickCount(), () -> this.connection.onDisconnect(new DisconnectionDetails(reason))));
+            this.getServer().schedule(new TickTask(this.getServer().getTickCount(), () -> this.connection.onDisconnect(new DisconnectionDetails(reason))));
         }
     }
 
