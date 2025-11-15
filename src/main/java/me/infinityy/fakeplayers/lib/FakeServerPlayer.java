@@ -1,8 +1,6 @@
 package me.infinityy.fakeplayers.lib;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.GameProfileRepository;
-import com.mojang.authlib.yggdrasil.response.NameAndId;
 import me.infinityy.fakeplayers.FakePlayers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
@@ -34,13 +32,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.phys.Vec3;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -74,16 +70,14 @@ public class FakeServerPlayer extends ServerPlayer {
 
         fetchGameProfile(server, gameprofile.id()).whenCompleteAsync((p, t) -> {
             spawning.remove(name);
-            if (t != null)
-            {
+            if (t != null) {
                 return;
             }
 
             GameProfile current;
             if (p.name().isEmpty()) {
                 current = gameprofile;
-            }
-            else {
+            } else {
                 current = p;
             }
 
@@ -134,8 +128,6 @@ public class FakeServerPlayer extends ServerPlayer {
         FakeClientConnection connection = new FakeClientConnection(PacketFlow.SERVERBOUND);
         CommonListenerCookie cookie = CommonListenerCookie.createInitial(player.gameProfile, false);
         server.getPlayerList().placeNewPlayer(connection, playerShadow, cookie);
-        playerShadow.connection = new FakeServerGamePacketListenerImpl(MinecraftServer.getServer(), connection, playerShadow, cookie);
-
 
         playerShadow.setHealth(player.getHealth());
         playerShadow.connection.teleport(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());

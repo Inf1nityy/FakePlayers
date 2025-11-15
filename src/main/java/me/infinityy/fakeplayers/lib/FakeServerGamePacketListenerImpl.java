@@ -1,21 +1,27 @@
 package me.infinityy.fakeplayers.lib;
 
+import io.netty.channel.ChannelFutureListener;
 import me.infinityy.fakeplayers.FakePlayers;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.DiscardedPayload;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerImpl {
     private static final String BUNGEE_CORD_CHANNEL = "BungeeCord";
@@ -29,7 +35,16 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
     }
 
     @Override
-    public void send(@NotNull Packet<?> packet) {
+    public void teleport(PositionMoveRotation posMoveRotation, Set<Relative> relatives) {
+        super.teleport(posMoveRotation, relatives);
+        if (player.level().getPlayerByUUID(player.getUUID()) != null) {
+            resetPosition();
+            player.level().getChunkSource().move(player);
+        }
+    }
+
+    @Override
+    public void send(Packet<?> packet) {
         if (packet instanceof ClientboundSetEntityMotionPacket p) {
             this.handleClientboundSetEntityMotionPacket(p);
         } else if (packet instanceof ClientboundCustomPayloadPacket p) {
@@ -47,7 +62,6 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
                 this.player.hurtMarked = true;
                 this.player.lerpMotion(packet.getMovement());
             });
-
         }
     }
 
