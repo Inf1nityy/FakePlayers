@@ -59,11 +59,16 @@ public class FakeServerPlayer extends ServerPlayer {
         server.services().nameToIdCache().resolveOfflineUsers(false);
         GameProfile gameprofile;
 
-        UUID uuid = OldUsersConverter.convertMobOwnerIfNecessary(server, username);
+        UUID uuid = null;
+        try {
+            uuid = OldUsersConverter.convertMobOwnerIfNecessary(server, username);
+        } catch (Exception ignored) {}
+        
         if (uuid == null) {
             server.services().nameToIdCache().resolveOfflineUsers(server.isDedicatedServer() && server.usesAuthentication());
             uuid = UUIDUtil.createOfflinePlayerUUID(username);
         }
+
         gameprofile = new GameProfile(uuid, username);
         String name = gameprofile.name();
         spawning.add(name);
