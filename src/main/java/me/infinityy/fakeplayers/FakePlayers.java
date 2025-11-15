@@ -10,8 +10,12 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class FakePlayers extends JavaPlugin {
+    public static final Logger LOGGER = LoggerFactory.getLogger("FakePlayers");
+
 
     @Override
     public void onEnable() {

@@ -45,7 +45,7 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
         if (packet.getId() == this.player.getId() && this.player.hurtMarked) {
             Bukkit.getScheduler().runTask(FakePlayers.getPlugin(FakePlayers.class), () -> {
                 this.player.hurtMarked = true;
-                this.player.lerpMotion(packet.getXa(), packet.getYa(), packet.getZa());
+                this.player.lerpMotion(packet.getMovement());
             });
 
         }
