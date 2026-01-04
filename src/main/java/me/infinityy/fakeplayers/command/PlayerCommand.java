@@ -13,6 +13,7 @@ import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.network.protocol.game.ClientboundSetHeldSlotPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.PermissionSet;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -183,7 +184,7 @@ public class PlayerCommand {
     }
 
     private int executeCommand(CommandContext<CommandSourceStack> context) {
-        MinecraftServer.getServer().getCommands().performPrefixedCommand(getPlayer(context).createCommandSourceStack().withPermission(4), StringArgumentType.getString(context, "command"));
+        MinecraftServer.getServer().getCommands().performPrefixedCommand(getPlayer(context).createCommandSourceStack().withPermission(PermissionSet.ALL_PERMISSIONS), StringArgumentType.getString(context, "command"));
         return 0;
     }
 
