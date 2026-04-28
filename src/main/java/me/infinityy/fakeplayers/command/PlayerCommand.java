@@ -32,7 +32,7 @@ import static io.papermc.paper.command.brigadier.Commands.*;
 public class PlayerCommand {
     public void register(Commands commands) {
         commands.register(literal("player")
-                .requires(commandSourceStack -> commandSourceStack.getSender().isOp())
+                .requires(commandSourceStack -> commandSourceStack.getSender().hasPermission("fakeplayers.command.player"))
                         .then(argument("player", StringArgumentType.word())
                                 .suggests((c, b) -> SharedSuggestionProvider.suggest(getPlayerSuggestions(c.getSource()), b))
                                 .then(literal("spawn").executes(this::spawn))

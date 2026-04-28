@@ -1,11 +1,9 @@
 package me.infinityy.fakeplayers.lib;
 
-import io.netty.channel.ChannelFutureListener;
 import me.infinityy.fakeplayers.FakePlayers;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
-import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.DiscardedPayload;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.MinecraftServer;
@@ -18,7 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 import java.util.Set;
@@ -35,7 +33,7 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
     }
 
     @Override
-    public void teleport(PositionMoveRotation posMoveRotation, Set<Relative> relatives) {
+    public void teleport(@NonNull PositionMoveRotation posMoveRotation, @NonNull Set<Relative> relatives) {
         super.teleport(posMoveRotation, relatives);
         if (player.level().getPlayerByUUID(player.getUUID()) != null) {
             resetPosition();
@@ -44,7 +42,7 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
     }
 
     @Override
-    public void send(Packet<?> packet) {
+    public void send(@NonNull Packet<?> packet) {
         if (packet instanceof ClientboundSetEntityMotionPacket p) {
             this.handleClientboundSetEntityMotionPacket(p);
         } else if (packet instanceof ClientboundCustomPayloadPacket p) {

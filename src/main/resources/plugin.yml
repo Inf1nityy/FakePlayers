@@ -3,4 +3,9 @@ version: '${version}'
 main: me.infinityy.fakeplayers.FakePlayers
 api-version: '${apiversion}'
 authors: [ infinityy ]
+permissions:
+  fakeplayers.command.player:
+    default: false
+    description: "Allows you to use the player command"
+
 description: Carpet-like fake players for PaperMC
